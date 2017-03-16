@@ -287,6 +287,10 @@ extension Session: WKNavigationDelegate {
             reload()
         }
     }
+    
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        delegate?.sessionDidFinishRequest(self)
+    }
 
     fileprivate struct NavigationDecision {
         let navigationAction: WKNavigationAction

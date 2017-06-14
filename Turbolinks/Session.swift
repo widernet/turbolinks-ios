@@ -36,6 +36,7 @@ open class Session: NSObject {
     fileprivate var _webView: WebView
     fileprivate var initialized = false
     fileprivate var refreshing = false
+    fileprivate var loading = false
 
     public init(webViewConfiguration: WKWebViewConfiguration) {
         _webView = WebView(configuration: webViewConfiguration)
@@ -160,8 +161,13 @@ extension Session: VisitDelegate {
     }
 
     func visitDidStart(_ visit: Visit) {
+        loading = true
         if !visit.hasCachedSnapshot {
-            visit.visitable.showVisitableActivityIndicator()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+              if self.loading {
+                visit.visitable.showVisitableActivityIndicator()
+              }
+            })
         }
     }
 
@@ -188,6 +194,7 @@ extension Session: VisitDelegate {
     }
 
     func visitDidFinish(_ visit: Visit) {
+        loading = false
         if refreshing {
             refreshing = false
             visit.visitable.visitableDidRefresh()
@@ -239,6 +246,7 @@ extension Session: VisitableDelegate {
     public func visitableDidRequestRefresh(_ visitable: Visitable) {
         if visitable === topmostVisitable {
             refreshing = true
+            loading = true
             visitable.visitableWillRefresh()
             reload()
         }

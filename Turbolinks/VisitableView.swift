@@ -187,8 +187,9 @@ open class VisitableView: UIView {
     }
 
     private func needsUpdateForContentInsets(_ insets: UIEdgeInsets) -> Bool {
-        guard let scrollView = webView?.scrollView else { return false }
-        return scrollView.contentInset.top != insets.top || scrollView.contentInset.bottom != insets.bottom
+      guard let scrollView = webView?.scrollView else { return false }
+      return (scrollView.contentInset.top != insets.top && insets.top != 0) ||
+        (scrollView.contentInset.bottom != insets.bottom && insets.bottom != 0)
     }
 
     private func updateWebViewScrollViewInsets(_ insets: UIEdgeInsets) {
